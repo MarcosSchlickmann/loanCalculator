@@ -12,6 +12,11 @@ import kotlin.math.pow
 class LoanCalculatorService {
 
     companion object {
+        private const val MONTHS_IN_YEAR = 12
+        private const val INTERREST_RATE_UNDER_25 = 0.05
+        private const val INTERREST_RATE_26_TO_40 = 0.03
+        private const val INTERREST_RATE_41_TO_60 = 0.02
+        private const val INTERREST_RATE_OVER_60 = 0.04
         private val BIRTH_DATE_FORMATS = arrayOf("dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy")
     }
 
@@ -35,7 +40,7 @@ class LoanCalculatorService {
     }
 
     private fun calculateMonthlyInterestRate(annualInterestRate: Double): Double {
-        return annualInterestRate / 12
+        return annualInterestRate / MONTHS_IN_YEAR
     }
 
     private fun calculateAnnualInterestRate(birthDateString: String): Double {
@@ -44,10 +49,10 @@ class LoanCalculatorService {
         val borrowerAge = Period.between(birthDate, currentDate).years
 
         return when {
-            borrowerAge <= 25 -> 0.05
-            borrowerAge in 26..40 -> 0.03
-            borrowerAge in 41..60 -> 0.02
-            else -> 0.04
+            borrowerAge <= 25 -> INTERREST_RATE_UNDER_25
+            borrowerAge in 26..40 -> INTERREST_RATE_26_TO_40
+            borrowerAge in 41..60 -> INTERREST_RATE_41_TO_60
+            else -> INTERREST_RATE_OVER_60
         }
     }
 
