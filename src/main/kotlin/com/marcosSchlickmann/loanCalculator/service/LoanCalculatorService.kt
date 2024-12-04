@@ -11,6 +11,10 @@ import kotlin.math.pow
 @Service
 class LoanCalculatorService {
 
+    companion object {
+        private val BIRTH_DATE_FORMATS = arrayOf("dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy")
+    }
+
     fun calculateLoanDetails(requestDTO: LoanCalculatorRequestDTO): LoanCalculatorResponseDTO {
         val annualInterestRate = calculateAnnualInterestRate(requestDTO.birthDate)
         val monthlyInterestRate = calculateMonthlyInterestRate(annualInterestRate)
@@ -35,8 +39,7 @@ class LoanCalculatorService {
     }
 
     private fun calculateAnnualInterestRate(birthDateString: String): Double {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val birthDate = LocalDate.parse(birthDateString, formatter)
+        val birthDate = parseDate(birthDateString)
         val currentDate = LocalDate.now()
         val borrowerAge = Period.between(birthDate, currentDate).years
 
@@ -46,5 +49,16 @@ class LoanCalculatorService {
             borrowerAge in 41..60 -> 0.02
             else -> 0.04
         }
+    }
+
+    private fun parseDate(dateString: String): LocalDate {
+        for (format in BIRTH_DATE_FORMATS) {
+            try {
+                return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(format))
+            } catch (e: Exception) {
+                continue
+            }
+        }
+        throw IllegalArgumentException("Invalid date format")
     }
 }

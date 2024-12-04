@@ -18,6 +18,33 @@ class LoanCalculatorServiceTests {
 
     @ParameterizedTest
     @CsvSource(
+        "1/1/1999",
+        "01/01/1999",
+        "01/1/1999",
+        "1/01/1999"
+    )
+    fun `test calculateLoanDetails birthDate formats`(
+        birthDate: String
+    ) {
+        val loanRequestDTO = LoanCalculatorRequestDTO(
+            loanAmount = 100.0,
+            birthDate = birthDate,
+            installments = 10
+        )
+
+        val expectedResult = LoanCalculatorResponseDTO(
+            totalRepaymentAmount =  102.31,
+            totalInterest = 2.31,
+            monthlyPaymentAmount = 10.23
+        )
+
+        val result = loanCalculatorService.calculateLoanDetails(loanRequestDTO)
+
+        assertEquals(expectedResult, result)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
         "18, 100.0, 10, 102.31, 2.31, 10.23",
         "25, 100.0, 10, 102.31, 2.31, 10.23",
         "26, 100.0, 10, 101.38, 1.38, 10.14",
@@ -55,7 +82,8 @@ class LoanCalculatorServiceTests {
     }
 
     private fun createBorrowerBirthDate(borrowerAge: Int): String {
-        val birthYear = LocalDate.now().year - borrowerAge
-        return "01/01/$birthYear"
+        val today = LocalDate.now()
+        val birthYear = today.year - borrowerAge
+        return "${today.dayOfMonth}/${today.monthValue}/$birthYear"
     }
 }
