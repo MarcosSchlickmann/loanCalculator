@@ -25,6 +25,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.mockito:mockito-core:5.14.2")
+	testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
 kotlin {
