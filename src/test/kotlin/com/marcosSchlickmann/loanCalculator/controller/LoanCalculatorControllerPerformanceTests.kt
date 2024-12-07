@@ -38,16 +38,27 @@ class LoanCalculatorControllerPerformanceTests {
         val request = HttpEntity(requestDTO, headers)
 
         // warm up
-        repeat(100) {
+        repeat(1000) {
             restTemplate.postForEntity(url, request, String::class.java)
         }
+        Thread.sleep(5000) //5 seconds
 
-        val numberOfRequests = 1000
+        val threadCounts = listOf(50, 100, 250, 500)
+        val requestCounts = listOf(1000, 5000, 10000)
+
+        for (threadCount in threadCounts) {
+            for (requestCount in requestCounts) {
+                testPerformance(url, request, threadCount, requestCount)
+                Thread.sleep(2000)
+            }
+        }
+    }
+
+    private fun testPerformance(url: String, request: HttpEntity<LoanCalculatorRequestDTO>, threadCount: Int, requestCount: Int) {
+        val executor = Executors.newFixedThreadPool(threadCount)
         val responseTimes = mutableListOf<Long>()
-        val executor = Executors.newFixedThreadPool(10)
 
-
-        repeat(numberOfRequests) {
+        repeat(requestCount) {
             executor.submit {
                 val responseTime = measureTimeMillis {
                     restTemplate.postForEntity(url, request, String::class.java)
@@ -61,7 +72,10 @@ class LoanCalculatorControllerPerformanceTests {
         executor.shutdown()
         executor.awaitTermination(1, TimeUnit.HOURS)
 
-        println("Average response time: ${responseTimes.average()} ms")
-    }
+        val averageResponseTime = responseTimes.average()
 
+        println("threadCount: $threadCount, requestCount: $requestCount")
+        println("Average response time: $averageResponseTime ms")
+        println("")
+    }
 }
