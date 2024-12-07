@@ -23,7 +23,6 @@ import kotlin.test.assertEquals
 @TestPropertySource(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @ContextConfiguration(classes = [TestConfig::class])
 class LoanCalculatorControllerIntegrationTests {
-
     @LocalServerPort
     private var port: Int = 0
 
@@ -38,23 +37,25 @@ class LoanCalculatorControllerIntegrationTests {
 
     @Test
     fun `test calculate integration`() {
-        val requestDTO = LoanCalculatorRequestDTO(
-            loanAmount = 100.0,
-            birthDate = "01/01/1999",
-            installments = 10
-        )
+        val requestDTO =
+            LoanCalculatorRequestDTO(
+                loanAmount = 100.0,
+                birthDate = "01/01/1999",
+                installments = 10,
+            )
 
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
 
         val url = "http://localhost:$port/api/loan-calculator"
         val request = HttpEntity(requestDTO, headers)
-        val response: ResponseEntity<String> = restTemplate.exchange(
-            url,
-            HttpMethod.POST,
-            request,
-            String::class.java
-        )
+        val response: ResponseEntity<String> =
+            restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String::class.java,
+            )
 
         assertEquals(HttpStatus.OK, response.statusCode)
 
@@ -66,5 +67,4 @@ class LoanCalculatorControllerIntegrationTests {
 
         verify(loanCalculatorServiceSpy).calculateLoanDetails(requestDTO)
     }
-
 }

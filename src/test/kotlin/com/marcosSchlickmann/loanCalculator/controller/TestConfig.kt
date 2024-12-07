@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Primary
 
 @TestConfiguration
 class TestConfig {
-
     @Bean
     @Primary
     fun loanCalculatorServiceSpy(loanCalculatorService: LoanCalculatorService): LoanCalculatorService {

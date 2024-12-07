@@ -10,7 +10,6 @@ import kotlin.math.pow
 
 @Service
 class LoanCalculatorService {
-
     companion object {
         private const val MONTHS_IN_YEAR = 12
         private const val INTEREST_RATE_UNDER_25 = 0.05
@@ -24,14 +23,16 @@ class LoanCalculatorService {
         val annualInterestRate = calculateAnnualInterestRate(requestDTO.birthDate)
         val monthlyInterestRate = calculateMonthlyInterestRate(annualInterestRate)
 
-        val monthlyPaymentAmount = (requestDTO.loanAmount * monthlyInterestRate) / (1 - (1 + monthlyInterestRate).pow(-requestDTO.installments.toDouble()))
+        val monthlyPaymentAmount =
+            (requestDTO.loanAmount * monthlyInterestRate) /
+                (1 - (1 + monthlyInterestRate).pow(-requestDTO.installments.toDouble()))
         val totalRepaymentAmount = monthlyPaymentAmount * requestDTO.installments
         val totalInterest = totalRepaymentAmount - requestDTO.loanAmount
 
         return LoanCalculatorResponseDTO(
             totalRepaymentAmount = roundToTwoDecimals(totalRepaymentAmount),
             totalInterest = roundToTwoDecimals(totalInterest),
-            monthlyPaymentAmount = roundToTwoDecimals(monthlyPaymentAmount)
+            monthlyPaymentAmount = roundToTwoDecimals(monthlyPaymentAmount),
         )
     }
 

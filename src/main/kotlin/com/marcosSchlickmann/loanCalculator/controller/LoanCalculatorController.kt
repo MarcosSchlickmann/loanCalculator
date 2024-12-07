@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/loan-calculator")
 class LoanCalculatorController {
-
     @Autowired
     private lateinit var loanCalculatorService: LoanCalculatorService
 
     @PostMapping("")
-    fun calculate(@RequestBody loanRequestDTO: LoanCalculatorRequestDTO): LoanCalculatorResponseDTO {
+    fun calculate(
+        @RequestBody loanRequestDTO: LoanCalculatorRequestDTO,
+    ): LoanCalculatorResponseDTO {
         return loanCalculatorService.calculateLoanDetails(loanRequestDTO)
     }
 }

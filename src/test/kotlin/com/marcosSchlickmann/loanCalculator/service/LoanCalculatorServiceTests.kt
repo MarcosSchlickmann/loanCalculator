@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
 
 @SpringBootTest
 class LoanCalculatorServiceTests {
-
     @Autowired
     private lateinit var loanCalculatorService: LoanCalculatorService
 
@@ -20,22 +19,22 @@ class LoanCalculatorServiceTests {
         "1/1/1999",
         "01/01/1999",
         "01/1/1999",
-        "1/01/1999"
+        "1/01/1999",
     )
-    fun `test calculateLoanDetails birthDate formats`(
-        birthDate: String
-    ) {
-        val loanRequestDTO = LoanCalculatorRequestDTO(
-            loanAmount = 100.0,
-            birthDate = birthDate,
-            installments = 10
-        )
+    fun `test calculateLoanDetails birthDate formats`(birthDate: String) {
+        val loanRequestDTO =
+            LoanCalculatorRequestDTO(
+                loanAmount = 100.0,
+                birthDate = birthDate,
+                installments = 10,
+            )
 
-        val expectedResult = LoanCalculatorResponseDTO(
-            totalRepaymentAmount =  102.31,
-            totalInterest = 2.31,
-            monthlyPaymentAmount = 10.23
-        )
+        val expectedResult =
+            LoanCalculatorResponseDTO(
+                totalRepaymentAmount = 102.31,
+                totalInterest = 2.31,
+                monthlyPaymentAmount = 10.23,
+            )
 
         val result = loanCalculatorService.calculateLoanDetails(loanRequestDTO)
 
@@ -51,7 +50,7 @@ class LoanCalculatorServiceTests {
         "41, 100.0, 10, 100.92, 0.92, 10.09",
         "60, 100.0, 10, 100.92, 0.92, 10.09",
         "61, 100.0, 10, 101.84, 1.84, 10.18",
-        "99, 100.0, 10, 101.84, 1.84, 10.18"
+        "99, 100.0, 10, 101.84, 1.84, 10.18",
     )
     fun `test calculateLoanDetails interest rate based on age`(
         borrowerAge: Int,
@@ -59,21 +58,23 @@ class LoanCalculatorServiceTests {
         installments: Int,
         totalRepaymentAmount: Double,
         totalInterest: Double,
-        monthlyPaymentAmount: Double
+        monthlyPaymentAmount: Double,
     ) {
         val borrowerBirthDate = createBorrowerBirthDate(borrowerAge)
 
-        val loanRequestDTO = LoanCalculatorRequestDTO(
-            loanAmount = loanAmount,
-            birthDate = borrowerBirthDate,
-            installments = installments
-        )
+        val loanRequestDTO =
+            LoanCalculatorRequestDTO(
+                loanAmount = loanAmount,
+                birthDate = borrowerBirthDate,
+                installments = installments,
+            )
 
-        val expectedResult = LoanCalculatorResponseDTO(
-            totalRepaymentAmount = totalRepaymentAmount,
-            totalInterest = totalInterest,
-            monthlyPaymentAmount = monthlyPaymentAmount
-        )
+        val expectedResult =
+            LoanCalculatorResponseDTO(
+                totalRepaymentAmount = totalRepaymentAmount,
+                totalInterest = totalInterest,
+                monthlyPaymentAmount = monthlyPaymentAmount,
+            )
 
         val result = loanCalculatorService.calculateLoanDetails(loanRequestDTO)
 

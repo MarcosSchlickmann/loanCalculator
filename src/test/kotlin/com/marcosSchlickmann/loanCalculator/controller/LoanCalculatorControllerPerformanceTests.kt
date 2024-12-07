@@ -16,7 +16,6 @@ import kotlin.system.measureTimeMillis
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["spring.main.allow-bean-definition-overriding=true"])
 class LoanCalculatorControllerPerformanceTests {
-
     @LocalServerPort
     private var port: Int = 0
 
@@ -25,11 +24,12 @@ class LoanCalculatorControllerPerformanceTests {
 
     @Test
     fun `test high volume of requests`() {
-        val requestDTO = LoanCalculatorRequestDTO(
-            loanAmount = 100.0,
-            birthDate = "01/01/1999",
-            installments = 10
-        )
+        val requestDTO =
+            LoanCalculatorRequestDTO(
+                loanAmount = 100.0,
+                birthDate = "01/01/1999",
+                installments = 10,
+            )
 
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
@@ -41,7 +41,7 @@ class LoanCalculatorControllerPerformanceTests {
         repeat(1000) {
             restTemplate.postForEntity(url, request, String::class.java)
         }
-        Thread.sleep(5000) //5 seconds
+        Thread.sleep(5000) // 5 seconds
 
         val threadCounts = listOf(50, 100, 250, 500)
         val requestCounts = listOf(1000, 5000, 10000)
@@ -54,15 +54,21 @@ class LoanCalculatorControllerPerformanceTests {
         }
     }
 
-    private fun testPerformance(url: String, request: HttpEntity<LoanCalculatorRequestDTO>, threadCount: Int, requestCount: Int) {
+    private fun testPerformance(
+        url: String,
+        request: HttpEntity<LoanCalculatorRequestDTO>,
+        threadCount: Int,
+        requestCount: Int,
+    ) {
         val executor = Executors.newFixedThreadPool(threadCount)
         val responseTimes = mutableListOf<Long>()
 
         repeat(requestCount) {
             executor.submit {
-                val responseTime = measureTimeMillis {
-                    restTemplate.postForEntity(url, request, String::class.java)
-                }
+                val responseTime =
+                    measureTimeMillis {
+                        restTemplate.postForEntity(url, request, String::class.java)
+                    }
                 synchronized(responseTimes) {
                     responseTimes.add(responseTime)
                 }
