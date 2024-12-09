@@ -14,7 +14,7 @@ class LoanCalculatorController {
     @Autowired
     private lateinit var loanCalculatorService: LoanCalculatorService
 
-    @PostMapping("")
+    @PostMapping("calculate")
     fun calculate(
         @RequestBody loanRequestDTO: LoanCalculatorRequestDTO,
     ): LoanCalculatorResponseDTO {
