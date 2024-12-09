@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import kotlin.math.pow
 
 @Service
@@ -34,6 +36,18 @@ class LoanCalculatorService {
             totalInterest = roundToTwoDecimals(totalInterest),
             monthlyPaymentAmount = roundToTwoDecimals(monthlyPaymentAmount),
         )
+    }
+
+    fun calculateLoanDetailsBulk(requestDTOs: List<LoanCalculatorRequestDTO>): List<LoanCalculatorResponseDTO> {
+        val executor = Executors.newCachedThreadPool()
+        val futures: List<Future<LoanCalculatorResponseDTO>> = requestDTOs.map {
+            executor.submit<LoanCalculatorResponseDTO> { calculateLoanDetails(it) }
+        }
+
+        val responseDTOs = futures.map { it.get() }
+        executor.shutdown()
+
+        return responseDTOs
     }
 
     private fun roundToTwoDecimals(amount: Double): Double {

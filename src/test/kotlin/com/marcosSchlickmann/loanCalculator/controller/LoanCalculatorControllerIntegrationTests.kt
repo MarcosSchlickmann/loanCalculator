@@ -5,6 +5,7 @@ import com.marcosSchlickmann.loanCalculator.dto.LoanCalculatorRequestDTO
 import com.marcosSchlickmann.loanCalculator.dto.LoanCalculatorResponseDTO
 import com.marcosSchlickmann.loanCalculator.service.LoanCalculatorService
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -66,5 +67,50 @@ class LoanCalculatorControllerIntegrationTests {
         assertEquals(10.23, responseDTO.monthlyPaymentAmount)
 
         verify(loanCalculatorServiceSpy).calculateLoanDetails(requestDTO)
+    }
+
+    @Test
+    fun `test bulk-calculate integration`() {
+        val requestDTOs = listOf(
+            LoanCalculatorRequestDTO(
+                loanAmount = 100.0,
+                birthDate = "01/01/1999",
+                installments = 10,
+            ),
+            LoanCalculatorRequestDTO(
+                loanAmount = 200.0,
+                birthDate = "01/01/1999",
+                installments = 20,
+            ),
+        )
+
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+
+        val url = "http://localhost:$port/api/loan-calculator/bulk-calculate"
+        val request = HttpEntity(requestDTOs, headers)
+        val response: ResponseEntity<String> =
+            restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String::class.java,
+            )
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+
+        val responseDTOs = objectMapper.readValue(response.body, Array<LoanCalculatorResponseDTO>::class.java).toList()
+
+        assertEquals(2, responseDTOs.size)
+
+        assertEquals(102.31, responseDTOs[0].totalRepaymentAmount)
+        assertEquals(2.31, responseDTOs[0].totalInterest)
+        assertEquals(10.23, responseDTOs[0].monthlyPaymentAmount)
+
+        assertEquals(208.87, responseDTOs[1].totalRepaymentAmount)
+        assertEquals(8.87, responseDTOs[1].totalInterest)
+        assertEquals(10.44, responseDTOs[1].monthlyPaymentAmount)
+
+        verify(loanCalculatorServiceSpy, times(2)).calculateLoanDetails(requestDTOs[0])
     }
 }

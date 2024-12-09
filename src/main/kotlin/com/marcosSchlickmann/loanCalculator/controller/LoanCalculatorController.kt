@@ -20,4 +20,18 @@ class LoanCalculatorController {
     ): LoanCalculatorResponseDTO {
         return loanCalculatorService.calculateLoanDetails(loanRequestDTO)
     }
+
+    @PostMapping("/bulk-calculate")
+    fun bulkCalculate(
+        @RequestBody loanRequestDTOs: List<LoanCalculatorRequestDTO>,
+    ): List<LoanCalculatorResponseDTO> {
+        return loanCalculatorService.calculateLoanDetailsBulk(loanRequestDTOs)
+    }
+
+    @PostMapping("/bulk-calculate-sequential")
+    fun bulkSimultaneousCalculate(
+        @RequestBody loanRequestDTOs: List<LoanCalculatorRequestDTO>,
+    ): List<LoanCalculatorResponseDTO> {
+        return loanRequestDTOs.map { loanCalculatorService.calculateLoanDetails(it) }
+    }
 }

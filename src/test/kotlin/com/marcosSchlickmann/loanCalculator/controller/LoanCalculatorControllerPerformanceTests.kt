@@ -1,5 +1,6 @@
 package com.marcosSchlickmann.loanCalculator.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.marcosSchlickmann.loanCalculator.dto.LoanCalculatorRequestDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,10 +9,13 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestPropertySource
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
+import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["spring.main.allow-bean-definition-overriding=true"])
@@ -22,8 +26,11 @@ class LoanCalculatorControllerPerformanceTests {
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
 
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
     @Test
-    fun `test high volume of requests`() {
+    fun `test calculate high volume of requests`() {
         val requestDTO =
             LoanCalculatorRequestDTO(
                 loanAmount = 100.0,
@@ -48,13 +55,13 @@ class LoanCalculatorControllerPerformanceTests {
 
         for (threadCount in threadCounts) {
             for (requestCount in requestCounts) {
-                testPerformance(url, request, threadCount, requestCount)
+                testCalculatePerformance(url, request, threadCount, requestCount)
                 Thread.sleep(2000)
             }
         }
     }
 
-    private fun testPerformance(
+    private fun testCalculatePerformance(
         url: String,
         request: HttpEntity<LoanCalculatorRequestDTO>,
         threadCount: Int,
@@ -84,4 +91,5 @@ class LoanCalculatorControllerPerformanceTests {
         println("Average response time: $averageResponseTime ms")
         println("")
     }
+
 }
