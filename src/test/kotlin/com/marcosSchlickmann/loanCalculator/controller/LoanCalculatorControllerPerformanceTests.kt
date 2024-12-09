@@ -9,10 +9,13 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestPropertySource
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
+import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["spring.main.allow-bean-definition-overriding=true"])
@@ -22,9 +25,6 @@ class LoanCalculatorControllerPerformanceTests {
 
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @Test
     fun `test calculate high volume of requests`() {
@@ -38,7 +38,7 @@ class LoanCalculatorControllerPerformanceTests {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
 
-        val url = "http://localhost:$port/api/loan-calculator"
+        val url = "http://localhost:$port/api/loan-calculator/calculate"
         val request = HttpEntity(requestDTO, headers)
 
         // warm up

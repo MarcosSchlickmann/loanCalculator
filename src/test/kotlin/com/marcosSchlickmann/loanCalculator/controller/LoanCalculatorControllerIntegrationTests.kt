@@ -48,7 +48,7 @@ class LoanCalculatorControllerIntegrationTests {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
 
-        val url = "http://localhost:$port/api/loan-calculator"
+        val url = "http://localhost:$port/api/loan-calculator/calculate"
         val request = HttpEntity(requestDTO, headers)
         val response: ResponseEntity<String> =
             restTemplate.exchange(

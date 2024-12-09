@@ -14,7 +14,7 @@ class LoanCalculatorController {
     @Autowired
     private lateinit var loanCalculatorService: LoanCalculatorService
 
-    @PostMapping("calculate")
+    @PostMapping("/calculate")
     fun calculate(
         @RequestBody loanRequestDTO: LoanCalculatorRequestDTO,
     ): LoanCalculatorResponseDTO {
@@ -28,6 +28,7 @@ class LoanCalculatorController {
         return loanCalculatorService.calculateLoanDetailsBulk(loanRequestDTOs)
     }
 
+    @Deprecated("This method is deprecated because it is not performant")
     @PostMapping("/bulk-calculate-sequential")
     fun bulkSimultaneousCalculate(
         @RequestBody loanRequestDTOs: List<LoanCalculatorRequestDTO>,
