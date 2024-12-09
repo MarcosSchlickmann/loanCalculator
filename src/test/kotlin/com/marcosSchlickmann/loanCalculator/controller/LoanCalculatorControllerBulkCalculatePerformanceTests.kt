@@ -30,13 +30,14 @@ class LoanCalculatorControllerBulkCalculatePerformanceTests {
     @Test
     fun `test compare bulk-calculate with bulk-calculate-simultaneously`() {
         val bulkSize = 10000
-        val requestDTOs = (1..bulkSize).map {
-            LoanCalculatorRequestDTO(
-                loanAmount = 100.0,
-                birthDate = "01/01/1999",
-                installments = 10,
-            )
-        }
+        val requestDTOs =
+            (1..bulkSize).map {
+                LoanCalculatorRequestDTO(
+                    loanAmount = 100.0,
+                    birthDate = "01/01/1999",
+                    installments = 10,
+                )
+            }
 
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
@@ -48,14 +49,26 @@ class LoanCalculatorControllerBulkCalculatePerformanceTests {
         val requestBulkSequentialCalculate = HttpEntity(requestDTOs, headers)
 
         val responseBulkSequentialCalculate: ResponseEntity<String>
-        val responseTimeBulkSequentialCalculate = measureTimeMillis {
-            responseBulkSequentialCalculate = restTemplate.postForEntity(urlBulkSequentialCalculate, requestBulkSequentialCalculate, String::class.java)
-        }
+        val responseTimeBulkSequentialCalculate =
+            measureTimeMillis {
+                responseBulkSequentialCalculate =
+                    restTemplate.postForEntity(
+                        urlBulkSequentialCalculate,
+                        requestBulkSequentialCalculate,
+                        String::class.java,
+                    )
+            }
 
         val responseBulkParallelCalculate: ResponseEntity<String>
-        val responseTimeBulkParallelCalculate = measureTimeMillis {
-            responseBulkParallelCalculate = restTemplate.postForEntity(urlBulkParallelCalculate, requestBulkParallelCalculate, String::class.java)
-        }
+        val responseTimeBulkParallelCalculate =
+            measureTimeMillis {
+                responseBulkParallelCalculate =
+                    restTemplate.postForEntity(
+                        urlBulkParallelCalculate,
+                        requestBulkParallelCalculate,
+                        String::class.java,
+                    )
+            }
 
         println("Bulk size: $bulkSize")
         println("Response time bulk-calculate-sequential: $responseTimeBulkSequentialCalculate ms")

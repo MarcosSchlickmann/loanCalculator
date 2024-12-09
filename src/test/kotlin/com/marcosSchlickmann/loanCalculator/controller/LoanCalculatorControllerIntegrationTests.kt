@@ -71,18 +71,19 @@ class LoanCalculatorControllerIntegrationTests {
 
     @Test
     fun `test bulk-calculate integration`() {
-        val requestDTOs = listOf(
-            LoanCalculatorRequestDTO(
-                loanAmount = 100.0,
-                birthDate = "01/01/1999",
-                installments = 10,
-            ),
-            LoanCalculatorRequestDTO(
-                loanAmount = 200.0,
-                birthDate = "01/01/1999",
-                installments = 20,
-            ),
-        )
+        val requestDTOs =
+            listOf(
+                LoanCalculatorRequestDTO(
+                    loanAmount = 100.0,
+                    birthDate = "01/01/1999",
+                    installments = 10,
+                ),
+                LoanCalculatorRequestDTO(
+                    loanAmount = 200.0,
+                    birthDate = "01/01/1999",
+                    installments = 20,
+                ),
+            )
 
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")

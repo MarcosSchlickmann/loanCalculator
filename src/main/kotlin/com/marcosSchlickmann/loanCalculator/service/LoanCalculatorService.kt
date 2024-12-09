@@ -40,9 +40,10 @@ class LoanCalculatorService {
 
     fun calculateLoanDetailsBulk(requestDTOs: List<LoanCalculatorRequestDTO>): List<LoanCalculatorResponseDTO> {
         val executor = Executors.newCachedThreadPool()
-        val futures: List<Future<LoanCalculatorResponseDTO>> = requestDTOs.map {
-            executor.submit<LoanCalculatorResponseDTO> { calculateLoanDetails(it) }
-        }
+        val futures: List<Future<LoanCalculatorResponseDTO>> =
+            requestDTOs.map {
+                executor.submit<LoanCalculatorResponseDTO> { calculateLoanDetails(it) }
+            }
 
         val responseDTOs = futures.map { it.get() }
         executor.shutdown()
