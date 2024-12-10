@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.test.assertEquals
 
 @SpringBootTest
@@ -81,9 +82,69 @@ class LoanCalculatorServiceTests {
         assertEquals(expectedResult, result)
     }
 
+    @ParameterizedTest
+    @CsvSource(
+        "26, 100.0, 10, 102.31, 2.31, 10.23, 101.38, 1.38, 10.14",
+        "41, 100.0, 10, 101.38, 1.38, 10.14, 100.92, 0.92, 10.09",
+        "61, 100.0, 10, 100.92, 0.92, 10.09, 101.84, 1.84, 10.18"
+    )
+    fun `test interest rate change if birthdate is today or tomorrow`(
+        borrowerAge: Int,
+        loanAmount: Double,
+        installments: Int,
+        totalRepaymentAmountTomorrow: Double,
+        totalInterestTomorrow: Double,
+        monthlyPaymentAmountTomorrow: Double,
+        totalRepaymentAmountToday: Double,
+        totalInterestToday: Double,
+        monthlyPaymentAmountToday: Double,
+    ) {
+        val borrowerBirthDateToday = createBorrowerBirthDate(borrowerAge)
+        val borrowerBirthDateTomorrow = LocalDate.parse(
+            borrowerBirthDateToday,
+            DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        ).plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
+        val loanRequestDTOToday =
+            LoanCalculatorRequestDTO(
+                loanAmount = loanAmount,
+                birthDate = borrowerBirthDateToday,
+                installments = installments,
+            )
+
+        val loanRequestDTOTomorrow =
+            LoanCalculatorRequestDTO(
+                loanAmount = loanAmount,
+                birthDate = borrowerBirthDateTomorrow,
+                installments = installments,
+            )
+
+        val expectedResultToday =
+            LoanCalculatorResponseDTO(
+                totalRepaymentAmount = totalRepaymentAmountToday,
+                totalInterest = totalInterestToday,
+                monthlyPaymentAmount = monthlyPaymentAmountToday,
+            )
+
+        val expectedResultTomorrow =
+            LoanCalculatorResponseDTO(
+                totalRepaymentAmount = totalRepaymentAmountTomorrow,
+                totalInterest = totalInterestTomorrow,
+                monthlyPaymentAmount = monthlyPaymentAmountTomorrow,
+            )
+
+        val resultToday = loanCalculatorService.calculateLoanDetails(loanRequestDTOToday)
+        val resultTomorrow = loanCalculatorService.calculateLoanDetails(loanRequestDTOTomorrow)
+
+        assertEquals(expectedResultToday, resultToday)
+        assertEquals(expectedResultTomorrow, resultTomorrow)
+    }
+
     private fun createBorrowerBirthDate(borrowerAge: Int): String {
         val today = LocalDate.now()
         val birthYear = today.year - borrowerAge
-        return "${today.dayOfMonth}/${today.monthValue}/$birthYear"
+        val dayOfMonth = today.dayOfMonth.toString().padStart(2, '0')
+        val monthValue = today.monthValue.toString().padStart(2, '0')
+        return "${dayOfMonth}/${monthValue}/$birthYear"
     }
 }

@@ -41,12 +41,13 @@ class LoanCalculatorControllerPerformanceTests {
         val url = "http://localhost:$port/api/loan-calculator/calculate"
         val request = HttpEntity(requestDTO, headers)
 
-        // warm up
+        // warm up the server to avoid cold starts
         repeat(1000) {
             restTemplate.postForEntity(url, request, String::class.java)
         }
         Thread.sleep(5000) // 5 seconds
 
+        // Split the tests into threads to more accurately simulate concurrent requests
         val threadCounts = listOf(50, 100, 250, 500)
         val requestCounts = listOf(1000, 5000, 10000)
 
