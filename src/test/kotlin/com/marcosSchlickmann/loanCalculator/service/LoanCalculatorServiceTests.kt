@@ -145,21 +145,23 @@ class LoanCalculatorServiceTests {
     @Test
     fun `test calculateLoanDetailsBulk`() {
         val bulkSize = 3
-        val requestDTOs = (1..bulkSize).map {
-            LoanCalculatorRequestDTO(
-                loanAmount = 100.0,
-                birthDate = "01/01/1999",
-                installments = 10,
-            )
-        }
+        val requestDTOs =
+            (1..bulkSize).map {
+                LoanCalculatorRequestDTO(
+                    loanAmount = 100.0,
+                    birthDate = "01/01/1999",
+                    installments = 10,
+                )
+            }
 
-        val expectedResult = (1..bulkSize).map {
-            LoanCalculatorResponseDTO(
-                totalRepaymentAmount = 102.31,
-                totalInterest = 2.31,
-                monthlyPaymentAmount = 10.23,
-            )
-        }
+        val expectedResult =
+            (1..bulkSize).map {
+                LoanCalculatorResponseDTO(
+                    totalRepaymentAmount = 102.31,
+                    totalInterest = 2.31,
+                    monthlyPaymentAmount = 10.23,
+                )
+            }
 
         val result = loanCalculatorService.calculateLoanDetailsBulk(requestDTOs)
 
