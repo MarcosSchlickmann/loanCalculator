@@ -86,7 +86,7 @@ class LoanCalculatorServiceTests {
     @CsvSource(
         "26, 100.0, 10, 102.31, 2.31, 10.23, 101.38, 1.38, 10.14",
         "41, 100.0, 10, 101.38, 1.38, 10.14, 100.92, 0.92, 10.09",
-        "61, 100.0, 10, 100.92, 0.92, 10.09, 101.84, 1.84, 10.18"
+        "61, 100.0, 10, 100.92, 0.92, 10.09, 101.84, 1.84, 10.18",
     )
     fun `test interest rate change if birthdate is today or tomorrow`(
         borrowerAge: Int,
@@ -100,10 +100,11 @@ class LoanCalculatorServiceTests {
         monthlyPaymentAmountToday: Double,
     ) {
         val borrowerBirthDateToday = createBorrowerBirthDate(borrowerAge)
-        val borrowerBirthDateTomorrow = LocalDate.parse(
-            borrowerBirthDateToday,
-            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        ).plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val borrowerBirthDateTomorrow =
+            LocalDate.parse(
+                borrowerBirthDateToday,
+                DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            ).plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
         val loanRequestDTOToday =
             LoanCalculatorRequestDTO(
@@ -145,6 +146,6 @@ class LoanCalculatorServiceTests {
         val birthYear = today.year - borrowerAge
         val dayOfMonth = today.dayOfMonth.toString().padStart(2, '0')
         val monthValue = today.monthValue.toString().padStart(2, '0')
-        return "${dayOfMonth}/${monthValue}/$birthYear"
+        return "$dayOfMonth/$monthValue/$birthYear"
     }
 }

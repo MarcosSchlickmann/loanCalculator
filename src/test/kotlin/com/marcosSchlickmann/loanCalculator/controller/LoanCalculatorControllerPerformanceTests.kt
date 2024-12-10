@@ -1,6 +1,5 @@
 package com.marcosSchlickmann.loanCalculator.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.marcosSchlickmann.loanCalculator.dto.LoanCalculatorRequestDTO
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,13 +8,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestPropertySource
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
-import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["spring.main.allow-bean-definition-overriding=true"])
